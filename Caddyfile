@@ -1,0 +1,57 @@
+# global options
+{
+	admin off # theres no need for the admin api in railway's environment
+	persist_config off # storage isn't persistent anyway
+	auto_https off # railway handles https for us, this could in some cases cause issues if left enabled
+	# runtime logs
+	log {
+		output discard
+	}
+	servers {
+		trusted_proxies static private_ranges # trust railway's proxy
+	}
+}
+
+(cors) {
+	@cors_preflight_{args[0]} {
+		method OPTIONS
+		header Origin {args[0]}
+	}
+
+	@cors_{args[0]} header Origin {args[0]}
+
+	handle @cors_preflight_{args[0]} {
+		header {
+			Access-Control-Allow-Origin "{args[0]}"
+			Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+			Access-Control-Allow-Headers *
+			Access-Control-Max-Age "3600"
+			defer
+		}
+		respond "" 204
+	}
+
+	handle @cors_{args[0]} {
+		header {
+			Access-Control-Allow-Origin "{args[0]}"
+			Access-Control-Expose-Headers *
+			defer
+		}
+	}
+}
+
+# site block, listens on the $PORT environment variable, automatically assigned by railway
+:{$PORT} {
+	import cors {$ORIGIN_0}
+	import cors {$ORIGIN_1}
+	import cors {$ORIGIN_2}
+	import cors {$ORIGIN_3}
+	import cors {$ORIGIN_4}
+
+	reverse_proxy /* http://{$LISTMONK_app__address} {
+		header_up Host {upstream_hostport}
+
+		header_down Upgrade-Insecure-Requests "1"
+		header_down Content-Security-Policy "upgrade-insecure-requests"
+	}
+}

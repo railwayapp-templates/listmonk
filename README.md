@@ -8,6 +8,7 @@ This example deploys self-hosted version of [Listmonk](https://listmonk.app/).
 
 - Listmonk
 - Postgres
+- CORS Support
 
 ## 💁‍♀️ How to use
 
