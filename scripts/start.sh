@@ -10,5 +10,6 @@ echo Database is now available
 
 parallel --ungroup --halt now,done=1 ::: \
     "exec ./start_listmonk.sh" \
-    "exec ./start_caddy.sh"; \
-    false
+    "exec ./start_caddy.sh"
+
+false
